@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yoast Peek</title>
+  <link rel="stylesheet" href="sidepanel.css">
+</head>
+<body class="theme-dark">
+  <div id="app">
+    <!-- Top Header -->
+    <header class="header">
+      <div class="header-left">
+        <img src="../icons/icon32.png" alt="Yoast Peek" class="logo-icon">
+        <div>
+          <h1 class="logo-title">Yoast Peek</h1>
+          <div id="plugin-badge" class="badge badge-neutral">Scanning...</div>
+        </div>
+      </div>
+      <div class="header-right">
+        <button id="btn-theme-toggle" class="icon-btn" title="Toggle Dark/Light Mode">
+          <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
+            <path fill="currentColor" d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/>
+          </svg>
+        </button>
+        <button id="btn-refresh" class="icon-btn" title="Refresh SEO Audit">
+          <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
+            <path fill="currentColor" d="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Page Info Bar -->
+    <div class="page-bar">
+      <div class="page-url-row">
+        <span class="url-text" id="page-url" title="Current URL">Detecting tab...</span>
+      </div>
+      <div class="page-tags-row">
+        <span id="badge-index" class="pill pill-success">INDEX</span>
+        <span id="badge-canonical" class="pill pill-neutral">CANONICAL</span>
+        <span id="badge-h1" class="pill pill-neutral">H1: -</span>
+        <span id="badge-lang" class="pill pill-neutral">LANG: -</span>
+        <span id="badge-wp-user" class="pill pill-info" style="display: none;">WP LOGGED-IN</span>
+      </div>
+    </div>
+
+    <!-- Quick Export Bar -->
+    <div class="export-bar">
+      <button class="btn-chip" id="btn-copy-title" title="Copy Title tag">Copy Title</button>
+      <button class="btn-chip" id="btn-copy-desc" title="Copy Meta Description">Copy Desc</button>
+      <button class="btn-chip" id="btn-copy-canonical" title="Copy Canonical URL">Copy Canonical</button>
+      <button class="btn-chip" id="btn-copy-json" title="Copy all audit data as formatted JSON">JSON</button>
+      <button class="btn-chip" id="btn-copy-csv" title="Copy single CSV record row">CSV</button>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs">
+      <button class="tab-btn active" data-tab="tab-overview">Overview</button>
+      <button class="tab-btn" data-tab="tab-serp">SERP</button>
+      <button class="tab-btn" data-tab="tab-headings">Headings</button>
+      <button class="tab-btn" data-tab="tab-social">Social</button>
+      <button class="tab-btn" data-tab="tab-schema">Schema</button>
+      <button class="tab-btn" data-tab="tab-diff">DOM vs Server</button>
+      <button class="tab-btn" data-tab="tab-v2">WP / v2</button>
+    </nav>
+
+    <!-- Tab Contents Container -->
+    <main class="tab-content-container">
+      
+      <!-- TAB 1: OVERVIEW -->
+      <section id="tab-overview" class="tab-pane active">
+        <!-- Yoast & WP Detection Card -->
+        <div class="card" id="card-detection">
+          <div class="card-header">
+            <span class="card-title">SEO Engine & Platform</span>
+          </div>
+          <div class="card-body">
+            <div class="prop-row">
+              <span class="prop-label">Detected:</span>
+              <span class="prop-val font-semibold" id="val-plugin-name">-</span>
+            </div>
+            <div class="prop-row" id="row-yoast-comment" style="display: none;">
+              <span class="prop-label">HTML Comment:</span>
+              <span class="prop-val font-mono text-xs" id="val-yoast-comment"></span>
+            </div>
+            <div class="prop-row" id="row-multisite-path" style="display: none;">
+              <span class="prop-label">Multisite Subpath:</span>
+              <span class="prop-val font-semibold text-accent" id="val-multisite-path"></span>
+            </div>
+            <div class="prop-row" id="row-wp-version" style="display: none;">
+              <span class="prop-label">WordPress:</span>
+              <span class="prop-val" id="val-wp-version"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Title Tag Card -->
+        <div class="card">
+          <div class="card-header flex-between">
+            <span class="card-title">&lt;title&gt;</span>
+            <div class="counters">
+              <span class="counter-badge" id="title-char-count">0 chars</span>
+              <span class="counter-badge" id="title-px-count">0 px</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <!-- Progress Bar for Pixel Width -->
+            <div class="meter-container">
+              <div class="meter-bar" id="meter-title-px" style="width: 0%;"></div>
+              <div class="meter-limit-line" title="580px Google Desktop Limit" style="left: 96.6%;"></div>
+            </div>
+            <div class="meter-labels">
+              <span>0 px</span>
+              <span class="meter-target">~580px desktop limit</span>
+              <span>600 px</span>
+            </div>
+
+            <p class="tag-content-box" id="val-title-text">(No title found)</p>
+            <div id="title-alerts" class="alerts-list"></div>
+          </div>
+        </div>
+
+        <!-- Meta Description Card -->
+        <div class="card">
+          <div class="card-header flex-between">
+            <span class="card-title">Meta Description</span>
+            <span class="counter-badge" id="desc-char-count">0 chars</span>
+          </div>
+          <div class="card-body">
+            <!-- Progress Bar for Char Length -->
+            <div class="meter-container">
+              <div class="meter-bar" id="meter-desc-char" style="width: 0%;"></div>
+              <div class="meter-limit-line" title="160 Chars SERP Limit" style="left: 80%;"></div>
+            </div>
+            <div class="meter-labels">
+              <span>0</span>
+              <span class="meter-target">155-160 char limit</span>
+              <span>200</span>
+            </div>
+
+            <p class="tag-content-box" id="val-desc-text">(No meta description found)</p>
+            <div id="desc-alerts" class="alerts-list"></div>
+          </div>
+        </div>
+
+        <!-- Canonical & Robots Card -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Indexing & Canonical</span>
+          </div>
+          <div class="card-body">
+            <div class="prop-row">
+              <span class="prop-label">Canonical URL:</span>
+              <span class="prop-val font-mono text-xs break-all" id="val-canonical-url">(none)</span>
+            </div>
+            <div id="canonical-alerts" class="alerts-list"></div>
+
+            <hr class="divider">
+
+            <div class="prop-row">
+              <span class="prop-label">Meta Robots:</span>
+              <span class="prop-val font-mono text-xs" id="val-robots-content">(none specified)</span>
+            </div>
+            <div class="prop-row" id="row-googlebot" style="display: none;">
+              <span class="prop-label">Googlebot:</span>
+              <span class="prop-val font-mono text-xs" id="val-googlebot-content"></span>
+            </div>
+            <div id="robots-alerts" class="alerts-list"></div>
+          </div>
+        </div>
+
+        <!-- Hreflang & Language Card -->
+        <div class="card">
+          <div class="card-header flex-between">
+            <span class="card-title">Language & Hreflang</span>
+            <span class="counter-badge" id="hreflang-count">0 tags</span>
+          </div>
+          <div class="card-body">
+            <div class="prop-row">
+              <span class="prop-label">&lt;html lang&gt;:</span>
+              <span class="prop-val font-semibold" id="val-html-lang">(not set)</span>
+            </div>
+            <div id="hreflang-list" class="tag-list"></div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- TAB 2: SERP PREVIEW -->
+      <section id="tab-serp" class="tab-pane">
+        <div class="card">
+          <div class="card-header flex-between">
+            <span class="card-title">Google SERP Simulator</span>
+            <div class="view-toggles">
+              <button class="toggle-btn active" id="btn-serp-desktop">Desktop</button>
+              <button class="toggle-btn" id="btn-serp-mobile">Mobile</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <!-- SERP Container -->
+            <div id="serp-preview-box" class="serp-desktop">
+              <div class="serp-header">
+                <div class="serp-favicon" id="serp-fav">G</div>
+                <div class="serp-site-info">
+                  <div class="serp-domain" id="serp-site-name">example.com</div>
+                  <div class="serp-breadcrumb" id="serp-url-breadcrumb">https://example.com › page</div>
+                </div>
+              </div>
+              <div class="serp-title-wrap">
+                <h3 class="serp-title" id="serp-title-display">Page Title Preview</h3>
+              </div>
+              <div class="serp-snippet-wrap">
+                <span class="serp-date" id="serp-date-display" style="display: none;">Mar 10, 2024 — </span>
+                <p class="serp-snippet" id="serp-desc-display">Meta description snippet preview will render here.</p>
+              </div>
+            </div>
+
+            <div class="info-callout mt-3">
+              <small>Preview accurately reflects desktop ~580px title wrapping limit and 160-character mobile/desktop snippet guidelines.</small>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- TAB 3: HEADINGS -->
+      <section id="tab-headings" class="tab-pane">
+        <!-- H1 Check Card -->
+        <div class="card">
+          <div class="card-header flex-between">
+            <span class="card-title">H1 Tag Verification</span>
+            <span id="h1-badge" class="pill pill-neutral">-</span>
+          </div>
+          <div class="card-body">
+            <div id="h1-list" class="h1-items-list"></div>
+          </div>
+        </div>
+
+        <!-- Heading Summary Breakdown -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Heading Breakdown</span>
+          </div>
+          <div class="card-body">
+            <div class="chips-grid">
+              <div class="stat-chip"><span class="chip-label">H1</span><span class="chip-val" id="stat-h1">0</span></div>
+              <div class="stat-chip"><span class="chip-label">H2</span><span class="chip-val" id="stat-h2">0</span></div>
+              <div class="stat-chip"><span class="chip-label">H3</span><span class="chip-val" id="stat-h3">0</span></div>
+              <div class="stat-chip"><span class="chip-label">H4</span><span class="chip-val" id="stat-h4">0</span></div>
+              <div class="stat-chip"><span class="chip-label">H5</span><span class="chip-val" id="stat-h5">0</span></div>
+              <div class="stat-chip"><span class="chip-label">H6</span><span class="chip-val" id="stat-h6">0</span></div>
+            </div>
+
+            <div id="heading-hierarchy-alerts" class="alerts-list mt-3"></div>
+          </div>
+        </div>
+
+        <!-- Full Tree Outline -->
+        <div class="card">
+          <div class="card-header flex-between">
+            <span class="card-title">Full Heading Outline</span>
+            <span class="counter-badge" id="stat-total-headings">0 headings</span>
+          </div>
+          <div class="card-body">
+            <div id="headings-tree" class="headings-tree-list"></div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- TAB 4: SOCIAL (OG & TWITTER) -->
+      <section id="tab-social" class="tab-pane">
+        <!-- Social Card Preview -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Open Graph Card Preview</span>
+          </div>
+          <div class="card-body">
+            <div class="social-preview-card" id="og-preview-card">
+              <div class="social-img-wrap" id="og-preview-img-wrap">
+                <img id="og-preview-img" src="" alt="Open Graph Image">
+                <div class="no-img-placeholder" id="og-no-img">No og:image detected</div>
+              </div>
+              <div class="social-card-content">
+                <div class="social-card-domain" id="og-preview-domain">DOMAIN.COM</div>
+                <div class="social-card-title" id="og-preview-title">Social Title</div>
+                <div class="social-card-desc" id="og-preview-desc">Social description snippet</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Open Graph Tags Table -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Open Graph Tags</span>
+          </div>
+          <div class="card-body">
+            <div class="prop-table" id="table-og-tags"></div>
+          </div>
+        </div>
+
+        <!-- Twitter Card Tags Table -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Twitter Card Tags</span>
+          </div>
+          <div class="card-body">
+            <div class="prop-table" id="table-twitter-tags"></div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- TAB 5: SCHEMA JSON-LD -->
+      <section id="tab-schema" class="tab-pane">
+        <div class="card">
+          <div class="card-header flex-between">
+            <span class="card-title">Schema.org Graph</span>
+            <span class="pill pill-primary" id="badge-schema-status">Checking...</span>
+          </div>
+          <div class="card-body">
+            <div class="prop-row">
+              <span class="prop-label">Graph Entities:</span>
+              <div class="types-tags-wrap" id="schema-types-list"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Parsed Entities Cards -->
+        <div id="schema-entities-container">
+          <!-- WebPage Entity -->
+          <div class="card entity-card" id="entity-webpage" style="display: none;">
+            <div class="card-header"><span class="entity-badge">WebPage</span></div>
+            <div class="card-body" id="entity-webpage-content"></div>
+          </div>
+
+          <!-- WebSite Entity -->
+          <div class="card entity-card" id="entity-website" style="display: none;">
+            <div class="card-header"><span class="entity-badge">WebSite</span></div>
+            <div class="card-body" id="entity-website-content"></div>
+          </div>
+
+          <!-- Organization Entity -->
+          <div class="card entity-card" id="entity-org" style="display: none;">
+            <div class="card-header"><span class="entity-badge">Organization</span></div>
+            <div class="card-body" id="entity-org-content"></div>
+          </div>
+
+          <!-- Breadcrumb Entity -->
+          <div class="card entity-card" id="entity-breadcrumbs" style="display: none;">
+            <div class="card-header"><span class="entity-badge">BreadcrumbList</span></div>
+            <div class="card-body" id="entity-breadcrumbs-content"></div>
+          </div>
+
+          <!-- Person / Author Entity -->
+          <div class="card entity-card" id="entity-author" style="display: none;">
+            <div class="card-header"><span class="entity-badge">Author / Person</span></div>
+            <div class="card-body" id="entity-author-content"></div>
+          </div>
+
+          <!-- Article Entity -->
+          <div class="card entity-card" id="entity-article" style="display: none;">
+            <div class="card-header"><span class="entity-badge">Article</span></div>
+            <div class="card-body" id="entity-article-content"></div>
+          </div>
+        </div>
+
+        <!-- Raw Schema Code Viewer -->
+        <div class="card">
+          <div class="card-header flex-between">
+            <span class="card-title">Raw JSON-LD</span>
+            <button class="btn-chip" id="btn-copy-schema">Copy JSON-LD</button>
+          </div>
+          <div class="card-body">
+            <pre class="code-box" id="raw-schema-code">(No Schema JSON-LD detected)</pre>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- TAB 6: DOM VS SERVER DIFF -->
+      <section id="tab-diff" class="tab-pane">
+        <div class="card">
+          <div class="card-header flex-between">
+            <span class="card-title">Live DOM vs Fresh Server HTML</span>
+            <button class="btn-chip" id="btn-fetch-fresh">Fetch Fresh Server</button>
+          </div>
+          <div class="card-body">
+            <p class="text-xs text-muted mb-3">
+              Compares the live browser DOM (after client-side JavaScript execution) with freshly fetched server HTML (cache-busted).
+            </p>
+
+            <div class="server-status-row mb-3" id="server-status-bar" style="display: none;">
+              <span class="prop-label">Server Response:</span>
+              <span class="pill pill-success" id="server-http-status">200 OK</span>
+              <span class="prop-label ml-2">X-Robots-Tag:</span>
+              <span class="pill pill-neutral" id="server-x-robots">(None)</span>
+            </div>
+
+            <!-- Diff Table -->
+            <div class="diff-table-container">
+              <table class="diff-table">
+                <thead>
+                  <tr>
+                    <th>Element</th>
+                    <th>Live DOM</th>
+                    <th>Server HTML</th>
+                    <th>Match</th>
+                  </tr>
+                </thead>
+                <tbody id="diff-tbody">
+                  <tr>
+                    <td colspan="4" class="text-center text-muted py-4">Click "Fetch Fresh Server" to compare</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div id="diff-summary-alert" class="alerts-list mt-3"></div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- TAB 7: WP / V2 RESEARCH & PROBES -->
+      <section id="tab-v2" class="tab-pane">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">WordPress REST API & Session Status</span>
+          </div>
+          <div class="card-body">
+            <div class="prop-row">
+              <span class="prop-label">User Session:</span>
+              <span class="prop-val" id="v2-session-status">Checking...</span>
+            </div>
+            <div class="prop-row" id="v2-post-row" style="display: none;">
+              <span class="prop-label">Detected Post ID:</span>
+              <span class="prop-val font-mono" id="v2-post-id">-</span>
+            </div>
+            <div class="prop-row" id="v2-edit-link-row" style="display: none;">
+              <span class="prop-label">Edit Post:</span>
+              <span class="prop-val"><a href="#" id="v2-edit-link" target="_blank" class="text-accent underline">Open in WordPress Editor ↗</a></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header flex-between">
+            <span class="card-title">Yoast Headless REST Probe</span>
+            <button class="btn-chip" id="btn-probe-yoast-rest">Test Endpoint</button>
+          </div>
+          <div class="card-body">
+            <p class="text-xs text-muted mb-2">
+              Probes <code>/wp-json/yoast/v1/get_head?url=...</code> (Yoast 14+ public headless endpoint).
+            </p>
+            <div id="yoast-rest-result" class="code-box text-xs" style="max-height: 200px; display: none;"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">V2 Logged-In Feasibility Facts</span>
+          </div>
+          <div class="card-body text-xs">
+            <ul class="styled-list">
+              <li><strong>Focus Keyphrase (<code>_yoast_wpseo_focuskw</code>):</strong> Stored as private post meta. WordPress core blocks keys starting with <code>_</code> from public REST API unless explicitly registered with <code>'show_in_rest' =&gt; true</code>.</li>
+              <li><strong>SEO &amp; Readability Scores:</strong> Computed on the client inside the editor and saved in <code>_yoast_wpseo_linkdex</code> and <code>_yoast_wpseo_content_score</code>. They are not rendered on the live frontend.</li>
+              <li><strong>Security:</strong> Yoast Peek operates locally without storing passwords or requiring API keys.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Toast Notification Overlay -->
+    <div id="toast" class="toast">Copied to clipboard!</div>
+  </div>
+
+  <script src="sidepanel.js"></script>
+</body>
+</html>
